@@ -29,6 +29,9 @@ yarn-error.log*
 # claude code local tooling
 .claude/
 
+# raw geojson source (generated lib/koreaGeo.js is committed instead)
+/scripts/data/
+
 # assignment source pdf (kept in docs/ instead)
 /Assignment_4.pdf
 

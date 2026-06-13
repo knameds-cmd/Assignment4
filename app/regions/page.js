@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { REGIONS, REGION_GROUPS } from "@/lib/regions";
 import { calculateSolar, DEFAULTS, formatNumber } from "@/lib/calc";
+import KoreaMap from "@/components/KoreaMap";
 import styles from "./Regions.module.css";
 
 /** 지역별 발전 잠재력 비교 페이지.
@@ -17,6 +18,7 @@ export default function RegionsPage() {
   const [sortKey, setSortKey] = useState("peakSunHours"); // 'peakSunHours' | 'name'
   const [sortAsc, setSortAsc] = useState(false);
   const [capacityKw, setCapacityKw] = useState(100);
+  const [selectedId, setSelectedId] = useState(null); // 지도/표에서 선택된 지역
 
   // 각 지역의 연간 발전량을 기준 용량으로 미리 계산해 둔다
   const rows = useMemo(() => {
@@ -65,8 +67,19 @@ export default function RegionsPage() {
           <h1>지역별 발전 잠재력 비교</h1>
           <p>
             전국 17개 시·도의 일평균 발전시간과 그에 따른 연간 발전량을
-            비교합니다. 권역·검색·정렬로 후보 지역을 빠르게 좁혀 보세요.
+            비교합니다. 지도에서 색이 진할수록 발전 잠재력이 높으며, 권역·검색·정렬로
+            후보 지역을 빠르게 좁혀 보세요.
           </p>
+        </div>
+
+        {/* 발전 잠재력 지도 */}
+        <div className="card card-pad" style={{ marginBottom: 24 }}>
+          <KoreaMap
+            regions={rows}
+            activeGroup={group}
+            selectedId={selectedId}
+            onSelect={setSelectedId}
+          />
         </div>
 
         {/* 컨트롤 바 */}
@@ -124,7 +137,13 @@ export default function RegionsPage() {
             </thead>
             <tbody>
               {visible.map((r, i) => (
-                <tr key={r.id}>
+                <tr
+                  key={r.id}
+                  className={`${styles.row} ${
+                    r.id === selectedId ? styles.rowSelected : ""
+                  }`}
+                  onClick={() => setSelectedId(r.id === selectedId ? null : r.id)}
+                >
                   <td className={styles.rank}>{i + 1}</td>
                   <td className={styles.name}>{r.name}</td>
                   <td>

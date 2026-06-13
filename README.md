@@ -27,7 +27,7 @@
 | 기능 | 설명 |
 |------|------|
 | **수익 시뮬레이터** | 지역·설비용량·성능비·SMP/REC 단가를 입력하면 연간 발전량, 예상 수익(SMP+REC), 투자 회수기간, 20년 누적 수익, CO₂ 절감량을 실시간 계산. 제주 등 계통 제약 지역은 **출력제어율**로 판매 가능 발전량·수익을 보정 |
-| **지역별 비교** | 전국 17개 시·도의 일평균 발전시간과 연간 발전량을 권역 필터·검색·정렬·막대 그래프로 비교 |
+| **지역별 비교** | 전국 17개 시·도 **발전 잠재력 지도(choropleth)** + 권역 필터·검색·정렬·막대 그래프. 지도 호버/클릭으로 지역을 강조하고 비교 표와 양방향 연동 |
 | **견적 저장·비교** | 계산 결과를 브라우저에 저장하고, 최고 수익·최단 회수기간 견적을 자동 하이라이트 |
 | **계산 방법 공개** | 모든 수식과 가정값, 데이터 출처·면책을 투명하게 안내 |
 
@@ -78,13 +78,18 @@ npm start
 │   ├── regions/          # 지역별 비교
 │   ├── saved/            # 저장한 견적
 │   └── about/            # 계산 방법
-├── components/           # Nav, Footer (공용 컴포넌트)
+├── components/           # Nav, Footer, KoreaMap (공용 컴포넌트)
 ├── lib/
-│   ├── regions.js        # 17개 시·도 일사량 데이터
+│   ├── regions.js        # 17개 시·도 일사량·출력제어율 데이터
 │   ├── calc.js           # 발전량·수익 계산 엔진
-│   └── storage.js        # localStorage 헬퍼
+│   ├── storage.js        # localStorage 헬퍼
+│   └── koreaGeo.js       # 시·도 SVG 경로 (자동 생성, 지도용)
+├── scripts/
+│   ├── build_pdf.py      # PRD.md → PDF 변환
+│   └── build_map.py      # GeoJSON → 단순화된 SVG 경로 생성
 ├── docs/
-│   └── PRD_SolarFit.pdf  # PRD + AI 개발 리포트
+│   ├── PRD.md            # PRD + AI 리포트 (원문)
+│   └── PRD_SolarFit.pdf  # PRD + AI 개발 리포트 (제출본)
 └── README.md
 ```
 

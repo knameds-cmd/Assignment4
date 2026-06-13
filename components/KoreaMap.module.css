@@ -1,0 +1,123 @@
+.wrap {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 24px;
+  align-items: center;
+}
+
+@media (max-width: 820px) {
+  .wrap {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mapBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.svg {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+}
+
+.region {
+  stroke: #ffffff;
+  stroke-width: 0.8;
+  cursor: pointer;
+  transition: fill 0.15s ease, opacity 0.15s ease;
+}
+
+.region:hover {
+  opacity: 0.85;
+}
+
+.active {
+  stroke: var(--color-navy);
+  stroke-width: 2;
+}
+
+.label {
+  font-size: 17px;
+  font-weight: 700;
+  fill: var(--color-navy);
+  paint-order: stroke;
+  stroke: #ffffff;
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+/* 범례 */
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+.legendBar {
+  width: 140px;
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgb(255, 233, 179), rgb(194, 65, 12));
+  border: 1px solid var(--color-border);
+}
+
+.legendNote {
+  margin-left: 6px;
+  font-weight: 600;
+}
+
+/* 우측 상세 패널 */
+.readout {
+  background: #fffdf8;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 22px;
+  min-height: 200px;
+}
+
+.readoutName {
+  font-size: 1.3rem;
+  margin: 8px 0 16px;
+}
+
+.stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 10px 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.statLabel {
+  font-size: 0.88rem;
+  color: var(--color-text-muted);
+}
+
+.statValue {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-navy);
+}
+
+.hint {
+  margin: 16px 0 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.placeholder {
+  margin: 0;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+
+.placeholder strong {
+  color: var(--color-amber-dark);
+}
