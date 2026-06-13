@@ -23,6 +23,10 @@ export default function SimulatorPage() {
   const [performanceRatio, setPerformanceRatio] = useState(
     DEFAULTS.performanceRatio
   );
+  // 출력제어율 초기값은 기본 지역(전남)의 권장값으로 시작
+  const [curtailRate, setCurtailRate] = useState(
+    findRegion("jeonnam").curtailRate
+  );
   const [smpPrice, setSmpPrice] = useState(DEFAULTS.smpPrice);
   const [recPrice, setRecPrice] = useState(DEFAULTS.recPrice);
   const [recWeight, setRecWeight] = useState(DEFAULTS.recWeight);
@@ -35,6 +39,14 @@ export default function SimulatorPage() {
 
   const region = findRegion(regionId);
 
+  // 지역을 바꾸면 해당 지역의 권장 출력제어율을 기본값으로 채워준다 (이후 수동 조정 가능)
+  function handleRegionChange(e) {
+    const id = e.target.value;
+    setRegionId(id);
+    const r = findRegion(id);
+    if (r) setCurtailRate(r.curtailRate);
+  }
+
   // 입력이 바뀔 때마다 결과를 다시 계산 (의존성 배열의 값이 변할 때만 실행)
   const result = useMemo(
     () =>
@@ -42,6 +54,7 @@ export default function SimulatorPage() {
         peakSunHours: region.peakSunHours,
         capacityKw,
         performanceRatio,
+        curtailRate,
         smpPrice,
         recPrice,
         recWeight,
@@ -51,6 +64,7 @@ export default function SimulatorPage() {
       region,
       capacityKw,
       performanceRatio,
+      curtailRate,
       smpPrice,
       recPrice,
       recWeight,
@@ -65,11 +79,12 @@ export default function SimulatorPage() {
       regionName: region.name,
       capacityKw: Number(capacityKw),
       performanceRatio: Number(performanceRatio),
+      curtailRate: Number(curtailRate),
       smpPrice: Number(smpPrice),
       recPrice: Number(recPrice),
       recWeight: Number(recWeight),
       installCostPerKw: Number(installCostPerKw),
-      annualKwh: result.annualKwh,
+      annualKwh: result.soldKwh,
       annualRevenue: result.annualRevenue,
       paybackYears: result.paybackYears,
       co2ReductionTon: result.co2ReductionTon,
@@ -104,11 +119,7 @@ export default function SimulatorPage() {
                 설치 지역
                 <span className="hint"> · 지역별 일평균 발전시간이 반영됩니다</span>
               </label>
-              <select
-                id="region"
-                value={regionId}
-                onChange={(e) => setRegionId(e.target.value)}
-              >
+              <select id="region" value={regionId} onChange={handleRegionChange}>
                 {REGIONS.map((r) => (
                   <option key={r.id} value={r.id}>
                     {r.name} ({r.peakSunHours}h/일)
@@ -197,6 +208,25 @@ export default function SimulatorPage() {
             </div>
 
             <div className="field">
+              <label htmlFor="curtail">
+                출력제어율
+                <span className="hint">
+                  {" "}
+                  · 0~1 · 계통 제약으로 못 파는 비율 (제주 ≈ 0.05, 지역 선택 시 자동 입력)
+                </span>
+              </label>
+              <input
+                id="curtail"
+                type="number"
+                step="0.01"
+                min="0"
+                max="1"
+                value={curtailRate}
+                onChange={(e) => setCurtailRate(e.target.value)}
+              />
+            </div>
+
+            <div className="field">
               <label htmlFor="site">
                 견적 이름 <span className="hint"> · 선택 (저장 시 구분용)</span>
               </label>
@@ -226,13 +256,17 @@ export default function SimulatorPage() {
           <div className={styles.results}>
             <div className={styles.highlightGrid}>
               <div className={`card card-pad ${styles.highlight}`}>
-                <span className={styles.metricLabel}>연간 예상 발전량</span>
+                <span className={styles.metricLabel}>연간 발전량 (판매 가능)</span>
                 <span className={styles.metricValue}>
-                  {formatNumber(result.annualKwh)}
+                  {formatNumber(result.soldKwh)}
                   <small> kWh</small>
                 </span>
                 <span className={styles.metricSub}>
-                  {formatNumber(result.annualMwh, 1)} MWh / 년
+                  {result.curtailRate > 0
+                    ? `이론 ${formatNumber(result.annualKwh)} kWh · 출력제어 −${formatNumber(
+                        result.curtailLossKwh
+                      )} kWh (${formatNumber(result.curtailRate * 100, 0)}%)`
+                    : `${formatNumber(result.soldMwh, 1)} MWh / 년`}
                 </span>
               </div>
               <div className={`card card-pad ${styles.highlight} ${styles.highlightAmber}`}>
