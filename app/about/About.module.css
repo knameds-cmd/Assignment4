@@ -37,3 +37,13 @@
 .disclaimer strong {
   color: var(--color-amber-dark);
 }
+
+.sourceList {
+  margin: 4px 0 14px;
+  padding-left: 20px;
+}
+
+.sourceList li {
+  margin-bottom: 8px;
+  line-height: 1.6;
+}

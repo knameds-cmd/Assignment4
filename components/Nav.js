@@ -11,9 +11,10 @@ import styles from "./Nav.module.css";
 
 const LINKS = [
   { href: "/", label: "홈" },
-  { href: "/simulator", label: "수익 시뮬레이터" },
-  { href: "/regions", label: "지역별 비교" },
-  { href: "/saved", label: "저장한 견적" },
+  { href: "/simulator", label: "시뮬레이터" },
+  { href: "/regions", label: "지역 비교" },
+  { href: "/data", label: "발전 데이터" },
+  { href: "/saved", label: "저장 견적" },
   { href: "/about", label: "계산 방법" },
 ];
 

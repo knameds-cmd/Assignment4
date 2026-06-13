@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { REGIONS, findRegion } from "@/lib/regions";
 import {
@@ -36,8 +36,53 @@ export default function SimulatorPage() {
   const [siteName, setSiteName] = useState("");
   const [savedCount, setSavedCount] = useState(() => getEstimates().length);
   const [justSaved, setJustSaved] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
 
   const region = findRegion(regionId);
+
+  // 공유 링크로 접속한 경우, URL 쿼리의 입력값으로 폼을 채운다 (최초 1회)
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    if ([...p.keys()].length === 0) return;
+    const r = p.get("region");
+    if (r && findRegion(r)) setRegionId(r);
+    const setNum = (key, setter) => {
+      const v = p.get(key);
+      if (v !== null && v !== "" && !Number.isNaN(Number(v))) setter(Number(v));
+    };
+    setNum("cap", setCapacityKw);
+    setNum("pr", setPerformanceRatio);
+    setNum("curtail", setCurtailRate);
+    setNum("smp", setSmpPrice);
+    setNum("rec", setRecPrice);
+    setNum("weight", setRecWeight);
+    setNum("cost", setInstallCostPerKw);
+    if (p.get("site")) setSiteName(p.get("site"));
+  }, []);
+
+  // 현재 입력값을 URL에 담아 클립보드에 복사 (엑셀로는 불가능한 '링크로 제안' 기능)
+  async function handleCopyLink() {
+    const params = new URLSearchParams({
+      region: regionId,
+      cap: String(capacityKw),
+      pr: String(performanceRatio),
+      curtail: String(curtailRate),
+      smp: String(smpPrice),
+      rec: String(recPrice),
+      weight: String(recWeight),
+      cost: String(installCostPerKw),
+    });
+    if (siteName.trim()) params.set("site", siteName.trim());
+    const url = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      // 클립보드 접근이 막혀도 주소창은 갱신되어 복사 가능
+    }
+    window.history.replaceState(null, "", url);
+    setLinkCopied(true);
+    setTimeout(() => setLinkCopied(false), 2800);
+  }
 
   // 지역을 바꾸면 해당 지역의 권장 출력제어율을 기본값으로 채워준다 (이후 수동 조정 가능)
   function handleRegionChange(e) {
@@ -245,6 +290,18 @@ export default function SimulatorPage() {
             {justSaved && (
               <p className={styles.savedMsg}>
                 ✅ 저장되었습니다. <Link href="/saved">저장한 견적 보기 →</Link>
+              </p>
+            )}
+            <button
+              className="btn btn-secondary"
+              onClick={handleCopyLink}
+              style={{ width: "100%", marginTop: 10 }}
+            >
+              🔗 결과 링크 복사
+            </button>
+            {linkCopied && (
+              <p className={styles.savedMsg}>
+                ✅ 링크를 복사했습니다. 고객에게 보내면 같은 결과 화면이 열립니다.
               </p>
             )}
             <p className={styles.savedCount}>

@@ -1,0 +1,110 @@
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.sub {
+  color: var(--color-text-muted);
+  margin: 4px 0 0;
+  font-size: 0.95rem;
+}
+
+.sub strong {
+  color: var(--color-amber-dark);
+}
+
+.controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ctl {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-navy);
+}
+
+.ctl select,
+.ctl input {
+  padding: 9px 11px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  min-width: 130px;
+}
+
+.ctl select:focus,
+.ctl input:focus {
+  outline: none;
+  border-color: var(--color-amber);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18);
+}
+
+/* 차트 */
+.chartWrap {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 8px;
+}
+
+.chart {
+  width: 100%;
+  min-width: 520px;
+  height: auto;
+}
+
+.bar {
+  fill: var(--color-amber);
+  transition: fill 0.15s ease, opacity 0.15s ease;
+}
+
+.barGroup:hover .bar {
+  opacity: 0.82;
+}
+
+.barPeak {
+  fill: var(--color-orange);
+}
+
+.barValue {
+  font-size: 11px;
+  fill: var(--color-text-muted);
+  text-anchor: middle;
+  font-weight: 600;
+}
+
+.barLabel {
+  font-size: 12px;
+  fill: var(--color-navy);
+  text-anchor: middle;
+}
+
+.source {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  margin: 14px 0 0;
+  line-height: 1.6;
+}
+
+.source strong {
+  color: var(--color-amber-dark);
+}
+
+.note {
+  font-size: 0.86rem;
+  color: var(--color-text-muted);
+  margin-top: 18px;
+}
+
+.note a {
+  color: var(--color-amber-dark);
+  font-weight: 600;
+}
