@@ -1,0 +1,134 @@
+.hero {
+  background: radial-gradient(
+      1200px 400px at 70% -10%,
+      rgba(245, 158, 11, 0.18),
+      transparent 60%
+    ),
+    linear-gradient(180deg, #fffdf8, var(--color-bg));
+  padding: 72px 0 56px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.heroTitle {
+  font-size: 2.7rem;
+  margin: 18px 0 16px;
+  letter-spacing: -0.01em;
+}
+
+.accent {
+  color: var(--color-amber-dark);
+}
+
+.heroDesc {
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
+  max-width: 640px;
+  margin: 0 0 28px;
+}
+
+.heroActions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .heroTitle {
+    font-size: 2rem;
+  }
+}
+
+/* 문제 정의 */
+.problem {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 32px;
+  align-items: center;
+}
+
+.problemCard {
+  background: var(--color-navy);
+  color: #e2e8f0;
+  border-radius: var(--radius);
+  padding: 28px;
+  box-shadow: var(--shadow);
+}
+
+.problemQuote {
+  font-size: 1.15rem;
+  line-height: 1.7;
+  margin: 0 0 12px;
+  color: #fff;
+}
+
+.problemWho {
+  margin: 0;
+  color: var(--color-amber);
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+@media (max-width: 860px) {
+  .problem {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 기능 섹션 */
+.featuresSection {
+  padding: 56px 0;
+  background: #fffdf8;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.featureIcon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.featureTitle {
+  font-size: 1.15rem;
+  margin-bottom: 8px;
+}
+
+/* 단계 */
+.step {
+  text-align: center;
+  padding: 12px;
+}
+
+.stepNum {
+  width: 46px;
+  height: 46px;
+  margin: 0 auto 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-amber), var(--color-orange));
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.2rem;
+  box-shadow: 0 6px 16px rgba(249, 115, 22, 0.3);
+}
+
+/* CTA */
+.cta {
+  text-align: center;
+  background: linear-gradient(135deg, var(--color-navy), var(--color-navy-soft));
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 48px 24px;
+  box-shadow: var(--shadow-lg);
+}
+
+.ctaTitle {
+  color: #fff;
+  font-size: 1.8rem;
+}
+
+.ctaDesc {
+  color: #cbd5e1;
+  margin: 0 0 24px;
+}

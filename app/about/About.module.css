@@ -1,0 +1,39 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 760px;
+}
+
+.wrap h2 {
+  font-size: 1.25rem;
+  margin-bottom: 12px;
+}
+
+.formula {
+  background: var(--color-amber-tint);
+  border-left: 3px solid var(--color-amber);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-weight: 600;
+  color: var(--color-navy);
+  margin: 0 0 12px;
+  font-size: 0.98rem;
+}
+
+.wrap p:last-child {
+  margin-bottom: 0;
+}
+
+.disclaimer {
+  background: #fffaf2;
+  border-color: var(--color-amber);
+}
+
+.disclaimer h2 {
+  color: var(--color-amber-dark);
+}
+
+.disclaimer strong {
+  color: var(--color-amber-dark);
+}

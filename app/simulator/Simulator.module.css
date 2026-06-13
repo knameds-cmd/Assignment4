@@ -1,0 +1,115 @@
+.layout {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+@media (max-width: 920px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.formTitle {
+  font-size: 1.2rem;
+  margin-bottom: 18px;
+}
+
+.savedMsg {
+  margin: 12px 0 0;
+  font-size: 0.9rem;
+  color: var(--color-green);
+}
+
+.savedMsg a {
+  color: var(--color-amber-dark);
+  font-weight: 600;
+}
+
+.savedCount {
+  margin: 10px 0 0;
+  font-size: 0.88rem;
+  color: var(--color-text-muted);
+}
+
+/* 결과 영역 */
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.highlightGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 520px) {
+  .highlightGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.highlight {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: linear-gradient(160deg, #0f2540, #1e3a5f);
+  border: none;
+  color: #fff;
+}
+
+.highlightAmber {
+  background: linear-gradient(160deg, var(--color-amber-dark), var(--color-orange));
+}
+
+.metricLabel {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  font-weight: 600;
+}
+
+.highlight .metricLabel {
+  color: #fde68a;
+}
+
+.metricValue {
+  font-size: 1.9rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.metricValue small {
+  font-size: 1rem;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.metricValueSm {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-navy);
+  line-height: 1.2;
+}
+
+.metricSub {
+  font-size: 0.82rem;
+  opacity: 0.8;
+}
+
+.card .metricSub {
+  color: var(--color-text-muted);
+}
+
+.note {
+  font-size: 0.84rem;
+  color: var(--color-text-muted);
+  margin: 4px 0 0;
+}
+
+.note a {
+  color: var(--color-amber-dark);
+  font-weight: 600;
+}
