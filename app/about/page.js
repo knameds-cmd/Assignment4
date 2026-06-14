@@ -118,6 +118,10 @@ export default function AboutPage() {
                 보급통계, 전력거래소(KPX) 전력시장통계 (공표치 근사)
               </li>
               <li>
+                <strong>출력제어(curtailment)</strong> — 전력거래소(KPX) 비중앙 출력제어
+                정보, 공공데이터포털(제주 태양광·풍력 제어량/횟수), 언론 공표치
+              </li>
+              <li>
                 <strong>SMP·REC·배출계수</strong> — 전력거래소 SMP, 신재생에너지
                 공급인증서(REC) 시장 자료, 국가 전력 배출계수
               </li>

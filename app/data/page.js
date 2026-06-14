@@ -8,6 +8,7 @@ import {
   MONTH_LABELS,
   monthlyGeneration,
   ANNUAL_PV_GENERATION,
+  JEJU_CURTAILMENT,
   SOLAR_DATA_SOURCE,
 } from "@/lib/solarHistory";
 import styles from "./Data.module.css";
@@ -99,6 +100,26 @@ export default function DataPage() {
           <p className={styles.source}>
             출처: {SOLAR_DATA_SOURCE.generation}. 표기 수치는 공표 통계 기반
             <strong> 근사치</strong>로, 자료·연도 기준에 따라 차이가 있을 수 있습니다.
+          </p>
+        </div>
+
+        {/* (3) 제주 출력제어 추이 */}
+        <div className="card card-pad" style={{ marginTop: 24 }}>
+          <h2 className="mt-0">제주 재생에너지 출력제어 횟수 추이</h2>
+          <p className={styles.sub}>
+            계통 제약으로 발전을 강제로 줄인 횟수입니다. 제주는 재생에너지 과밀로
+            출력제어가 매년 급증해, 시뮬레이터의 <strong>출력제어율</strong>로
+            수익에 반영됩니다.
+          </p>
+          <BarChart
+            values={JEJU_CURTAILMENT.map((d) => d.count)}
+            labels={JEJU_CURTAILMENT.map((d) => `${d.year}`)}
+            unit="회"
+          />
+          <p className={styles.source}>
+            출처: {SOLAR_DATA_SOURCE.curtailment}. 출력제어는 현재 사실상 제주에
+            집중되어 있으며(육지는 2024년부터 호남 일부), 수치는 공표치
+            <strong> 근사</strong>입니다.
           </p>
         </div>
 
