@@ -6,10 +6,11 @@ reportlab + Windows 기본 한글 폰트(맑은 고딕)를 임베딩해, 외부 
 한글 PRD/리포트를 깔끔한 PDF로 만든다. 지원 문법: 제목(#/##/###), 문단,
 글머리표(-)/번호 목록(1.), 표(|), 인용(>), 수평선(---), 굵게(**)/기울임(*)/인라인코드(`).
 
-실행: py -3 scripts/build_pdf.py
+실행: py -3 scripts/build_pdf.py [input.md] [output.pdf] [title]
 """
 import os
 import re
+import sys
 import html
 
 from reportlab.lib.pagesizes import A4
@@ -20,12 +21,14 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
     SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak,
+    Preformatted,
 )
 from reportlab.platypus.flowables import HRFlowable
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC = os.path.join(ROOT, "docs", "PRD.md")
-OUT = os.path.join(ROOT, "docs", "PRD_SolarFit.pdf")
+SRC = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, "docs", "PRD.md")
+OUT = sys.argv[2] if len(sys.argv) > 2 else os.path.join(ROOT, "docs", "PRD_SolarFit.pdf")
+DOC_TITLE = sys.argv[3] if len(sys.argv) > 3 else "SolarFit PRD"
 
 # --- 한글 폰트 등록 (맑은 고딕) ---
 FONT, FONT_BD = "Malgun", "MalgunBd"
@@ -58,12 +61,30 @@ S = {
     "quote": style("quote", leftIndent=12, textColor=MUTED, fontName=FONT, spaceBefore=4, spaceAfter=8, borderPadding=(2, 2, 2, 8)),
     "cell": style("cell", fontSize=9.5, leading=13),
     "cellh": style("cellh", fontName=FONT_BD, fontSize=9.5, leading=13, textColor=NAVY),
+    "code": style("code", fontName=FONT, fontSize=8.5, leading=12.5, textColor=colors.HexColor("#1f2937")),
 }
 
 
+def code_block(text):
+    """코드블록을 연한 배경의 박스로 렌더링 (줄바꿈/들여쓰기 보존)."""
+    avail = A4[0] - 4.0 * cm
+    pre = Preformatted(text if text.strip() else " ", S["code"])
+    t = Table([[pre]], colWidths=[avail])
+    t.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#f6f3ec")),
+        ("BOX", (0, 0), (-1, -1), 0.5, BORDER),
+        ("LEFTPADDING", (0, 0), (-1, -1), 10),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 10),
+        ("TOPPADDING", (0, 0), (-1, -1), 8),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+    ]))
+    return t
+
+
 def inline(text):
-    """마크다운 인라인 -> reportlab 마크업. 먼저 XML 이스케이프 후 치환."""
-    t = html.escape(text)
+    """마크다운 인라인 -> reportlab 마크업. 링크는 'text (url)'로, 그 외는 이스케이프 후 치환."""
+    t = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r"\1 (\2)", text)
+    t = html.escape(t)
     t = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", t)
     t = re.sub(r"\*(.+?)\*", r"<i>\1</i>", t)
     t = re.sub(r"`(.+?)`", r'<font face="Courier" color="#b45309">\1</font>', t)
@@ -91,6 +112,18 @@ def build():
         # 빈 줄
         if not stripped:
             i += 1
+            continue
+
+        # 코드블록 (```)
+        if stripped.startswith("```"):
+            i += 1
+            buf = []
+            while i < n and not lines[i].strip().startswith("```"):
+                buf.append(lines[i])
+                i += 1
+            i += 1  # 닫는 ``` 건너뜀
+            flow.append(code_block("\n".join(buf)))
+            flow.append(Spacer(1, 6))
             continue
 
         # 수평선
@@ -167,7 +200,7 @@ def build():
         OUT, pagesize=A4,
         leftMargin=2.0 * cm, rightMargin=2.0 * cm,
         topMargin=1.8 * cm, bottomMargin=1.8 * cm,
-        title="SolarFit PRD", author="knameds",
+        title=DOC_TITLE, author="knameds",
     )
     doc.build(flow)
     print("PDF generated:", OUT)

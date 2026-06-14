@@ -1,230 +1,187 @@
-# SolarFit — 제품 요구사항 정의서 (PRD)
+# SolarFit — Product Requirements Document (PRD)
 
-**지역별 태양광 발전·수익 시뮬레이터 (사업자용)**
+**Regional Solar Generation & Revenue Simulator (for Installers)**
 
 Introduction to AI Programming · Assignment 4
-작성일: 2026-06-14
+Date: 2026-06-14
 
 ---
 
-## 1. 제품 개요 (Product Overview)
+## Submission Information
 
-**SolarFit**은 태양광 설치 사업자가 새로운 설치 부지를 검토할 때, 해당 지역의
-**연간 발전량·예상 수익·투자 회수기간·CO₂ 절감량**을 즉시 계산하고 고객에게
-제안할 수 있도록 돕는 웹 기반 시뮬레이터다.
+- **GitHub Repository:** https://github.com/knameds-cmd/Assignment4
+- **Live Deployment (Vercel):** https://assignment4-51gw.vercel.app
+- **Author:** knameds (knameds@gmail.com)
+- **Tech Stack:** Next.js 15 (App Router), React 19, CSS Modules, browser localStorage
+- **Document contents:** Product Requirements Document (PRD) + AI-Assisted Development Report
 
-소규모 태양광 사업자는 견적 한 건마다 지역 일사량, 시스템 손실, SMP·REC 단가를
-반영한 계산을 직접 해야 한다. 매번 엑셀을 다시 작성해야 하고, 현장이나 전화 상담
-중에는 대략적인 수익조차 즉답하기 어렵다. SolarFit은 이 반복 계산을 표준 산정식으로
-자동화하여, 입력 한 번으로 사업 검토에 필요한 핵심 지표를 한 화면에 제공한다.
-
-- **해결하는 문제:** 부지별 발전량·수익 계산의 반복과 즉답 불가
-- **핵심 가치:** 30초 만에 신뢰할 수 있는 추정치를 제시하고, 여러 부지를 비교
-- **현실성:** 제주처럼 계통 제약으로 출력제어가 잦은 지역은 발전량 일부가
-  판매되지 못하는 현실을 "출력제어율"로 반영해 수익을 보수적으로 추정
-- **데이터:** 지역별 일사량·과거 태양광 발전량·제주 출력제어는 기상청·한국에너지공단·
-  전력거래소(KPX) 등 국내 공개 통계를 참고한 대표값을 사용하며, 출처와 한계를 함께 표기
-- **웹 강점:** 계산 결과를 URL 링크로 공유할 수 있어, 엑셀과 달리 고객에게 즉시
-  동일한 결과 화면을 전달 가능
-- **제약:** 백엔드·데이터베이스·유료 API 없이 브라우저(localStorage)만으로 동작
-
-## 2. 타겟 사용자 (Target Users)
-
-| 사용자 | 니즈 / 페인 포인트 | 사용 맥락 |
-|--------|------------------|-----------|
-| **소규모 태양광 설치 사업자** | 부지마다 발전량·수익을 빠르게 계산해 제안하고 싶다. 엑셀 반복 작업이 번거롭다. | 현장 실측 후, 고객 상담 직전/도중 |
-| **태양광 영업 담당자** | 고객 문의에 대략적 수익을 즉답하고, 비교 자료를 만들고 싶다. | 전화/대면 상담 |
-| **태양광 설치를 고려하는 건물주** | 우리 지역·우리 건물 규모면 얼마나 이득인지 직관적으로 알고 싶다. | 정보 탐색 단계 |
-
-핵심 타겟은 **소규모 태양광 설치 사업자**이며, 별도 학습 없이 즉시 사용할 수 있는
-단순함과, 가정값을 현장 조건에 맞게 조정할 수 있는 유연함을 동시에 요구한다.
-
-## 3. 프로젝트 목표 (Project Goals)
-
-- **G1.** 지역·설비 조건 입력만으로 연간 발전량과 예상 수익을 3초 이내에 계산한다.
-- **G2.** 전국 17개 시·도의 발전 잠재력을 한 화면에서 비교·정렬할 수 있게 한다.
-- **G3.** 회원가입·서버 없이 여러 부지의 견적을 저장하고 비교할 수 있게 한다.
-- **G4.** 모든 계산식과 가정을 투명하게 공개해 결과의 신뢰도를 사용자가 판단하게 한다.
-- **G5.** 모바일·데스크톱 모두에서 일관된 사용성을 제공하고 Vercel에 배포한다.
-
-## 4. 핵심 사용자 시나리오 (Core User Scenario)
-
-> **상황** — 전남 나주에서 활동하는 태양광 설치 사업자 김 대표는 고객으로부터
-> "지붕에 100kW를 올리면 1년에 얼마나 버느냐"는 전화를 받는다.
-
-1. 김 대표는 SolarFit **수익 시뮬레이터**에 접속한다.
-2. 설치 지역을 **전라남도**, 설비용량을 **100kW**로 선택한다.
-3. SMP 단가(130원)와 REC 가중치(1.2)는 기본값을 그대로 두고, 성능비만 현장
-   조건에 맞게 조정한다.
-4. 화면에 **연간 발전량 약 110,960kWh**, **연간 수익 약 2,374만원**,
-   **투자 회수기간 약 5.9년**, **CO₂ 절감 51톤**이 즉시 표시된다.
-5. 김 대표는 견적 이름을 "나주 한빛마을 지붕형"으로 입력하고 **저장**한다.
-6. 같은 방식으로 다른 후보 부지도 저장한 뒤, **저장한 견적** 페이지에서
-   최고 수익·최단 회수기간 견적을 비교해 고객에게 제안한다.
-
-## 5. 기능 목록 (Feature List)
-
-| 기능 | 설명 | 우선순위 |
-|------|------|----------|
-| 수익 시뮬레이터 | 지역·설비용량·성능비·SMP/REC 단가 입력 → 발전량·수익·회수기간 실시간 계산 | **Must-have** |
-| 지역별 일사량 데이터 | 전국 17개 시·도 일평균 발전시간 내장 | **Must-have** |
-| 견적 저장/삭제 (localStorage) | 계산 결과를 브라우저에 저장하고 관리 | **Must-have** |
-| 출력제어(curtailment) 반영 | 지역별 출력제어율로 "판매 가능 발전량·수익"을 보정 (제주 등 계통 제약 반영) | **Should-have** |
-| 지역별 비교(정렬/필터/검색) | 권역 필터·이름 검색·발전량 정렬·막대 시각화 | **Should-have** |
-| 지역 발전 잠재력 지도 | 전국 17개 시·도 choropleth 지도, 호버/클릭으로 지역 강조 및 비교 표와 양방향 연동 | **Should-have** |
-| 과거·월별 발전 데이터 | 국내 공개 통계 기반 월별 발전 패턴·전국 연간 태양광 발전량 추이 시각화 | **Should-have** |
-| 결과 공유 링크 | 입력값을 URL로 담아 복사 → 고객에게 동일한 결과 화면을 링크로 전달(웹 고유 기능) | **Should-have** |
-| 견적 비교 하이라이트 | 저장 견적 중 최고 수익·최단 회수기간 자동 표시 | **Should-have** |
-| 환경 효과 환산 | CO₂ 절감량·소나무 식재 효과 환산 | **Should-have** |
-| 계산 방법/면책 공개 | 수식·가정값·데이터 출처 안내 | **Should-have** |
-| 견적 PDF 내보내기 | 저장 견적을 PDF 제안서로 출력 | **Nice-to-have** |
-| 실측 일사량 API 연동 | 부지별 정밀 일사량 데이터 연동 | **Nice-to-have** |
-
-## 6. 페이지 구조 (Page Structure)
-
-- **홈 (`/`)** — 서비스 소개, 문제 정의, 기능 요약, 사용 방법 3단계, CTA
-- **수익 시뮬레이터 (`/simulator`)** — 입력 폼 + 실시간 결과 + 견적 저장 (핵심)
-- **지역별 비교 (`/regions`)** — 17개 시·도 발전 잠재력 지도(choropleth)·표·정렬·필터·막대
-- **발전 데이터 (`/data`)** — 지역별 월별 발전 패턴·전국 연간 태양광 발전량 추이(공개 통계 기반)
-- **저장한 견적 (`/saved`)** — localStorage 견적 목록·비교·삭제
-- **계산 방법 (`/about`)** — 수식·가정값·데이터 출처·면책
-
-모든 페이지 상단에 공통 **네비게이션 바**(현재 위치 강조, 모바일 햄버거 메뉴)와
-하단에 **푸터**(면책·주요 링크)를 둔다.
-
-## 7. 기술 요구사항 (Technical Requirements)
-
-- **프레임워크:** Next.js 15 (App Router) + React 19
-- **언어:** JavaScript (설명 가능성 우선, TypeScript 미사용)
-- **스타일링:** CSS Modules + 전역 CSS 디자인 토큰 (외부 UI 라이브러리 미사용)
-- **상태/저장:** React `useState`/`useMemo`, 영속 저장은 브라우저 `localStorage`
-- **백엔드:** 없음 (모든 계산은 클라이언트에서 수행, 비용·키 관리 불필요)
-- **배포:** Vercel (GitHub 연동 자동 배포)
-- **구조:** 계산 로직(`lib/calc.js`)·데이터(`lib/regions.js`)·저장(`lib/storage.js`)을
-  UI와 분리해 재사용성과 테스트 용이성 확보
-
-## 8. 디자인 요구사항 (Design Requirements)
-
-- **콘셉트:** 태양광을 연상시키는 따뜻한 **앰버/오렌지** 강조색 + 신뢰감을 주는
-  **네이비** 텍스트, 밝고 깨끗한 배경.
-- **레이아웃:** 최대 폭 1080px 중앙 정렬, 카드 기반 정보 구획, 넉넉한 여백.
-- **네비게이션:** 상단 고정 바 + 현재 페이지 강조, 모바일에서 햄버거 토글.
-- **반응형:** 데스크톱 다단 그리드 → 모바일 단일 컬럼으로 자연스럽게 축소.
-- **UX 원칙:** ① 입력 즉시 결과 반영(피드백 지연 최소화) ② 추정치임을 명확히 고지
-  ③ 핵심 지표를 강조 카드로 우선 노출 ④ 회원가입 없는 즉시 사용.
-
-## 9. 마일스톤 (Milestones)
-
-| 단계 | 산출물 | 일정 |
-|------|--------|------|
-| M1. 기획 | 서비스 정의 · PRD 작성 | 6/13 |
-| M2. 프로토타입 | Next.js 구조 · 계산 엔진 · 시뮬레이터 | 6/13 |
-| M3. 기능 완성 | 지역 비교 · 견적 저장 · 계산 방법 페이지 | 6/14 |
-| M4. 검증 | 빌드·동작 확인 · 계산 검증 · 반응형 점검 | 6/14 |
-| M5. 배포 | GitHub 업로드 · Vercel 배포 · README | 6/14 |
+*The full source code is available in the GitHub repository above. This document focuses on the PRD and the AI development report.*
 
 ---
 
-# AI 개발 리포트 (AI-Assisted Development Report)
+## 1. Product Overview
 
-## 1. 사용한 AI 도구
+**SolarFit** is a web-based simulator that helps solar power installers instantly estimate
+a candidate site's **annual generation, expected revenue, payback period, and CO₂ reduction**,
+and present those figures to clients on the spot.
 
-- **Claude (Anthropic, Claude Code)** — 기획 구체화, 코드 생성, 디버깅, 문서화
-  전반에 사용.
+Small installers must repeat these calculations for every new site. Because regional solar
+resource, system losses, and SMP/REC prices change each time, they end up rebuilding
+spreadsheets and cannot answer client questions quickly. SolarFit automates this repetitive
+work with standard estimation formulas, so a single set of inputs produces all the key
+metrics needed for a feasibility check on one screen.
 
-## 2. AI에게 요청한 작업
+- **Problem solved:** Repetitive per-site generation/revenue calculations and the inability to answer on the spot.
+- **Core value:** Provides a credible estimate in about 30 seconds and compares multiple sites.
+- **Realism (curtailment):** In regions where grid constraints force frequent curtailment (e.g., Jeju), part of the generation cannot be sold; this is reflected through a "curtailment rate" so revenue is estimated conservatively.
+- **Data:** Regional solar resource, historical PV generation, and curtailment use representative values referenced from Korean public statistics (KMA, Korea Energy Agency, Korea Power Exchange / KPX), with sources and limitations clearly labeled.
+- **Web advantage:** A calculation can be shared as a URL link, so unlike a spreadsheet the installer can send a client the exact same result screen instantly.
+- **Constraint:** Runs entirely in the browser (localStorage) with no backend, database, or paid API.
 
-- 태양광 사업자용 웹 서비스 아이디어 구체화 및 PRD 초안 작성
-- Next.js(App Router) 프로젝트 구조 설계 및 페이지/컴포넌트 코드 생성
-- 태양광 발전량·수익·회수기간 표준 산정식의 구현
-- 전국 17개 시·도 일사량 데이터셋 구성
-- localStorage 기반 견적 저장/비교 기능 구현
-- 디자인 토큰 기반 CSS 스타일링 및 반응형 처리
-- 빌드 오류·hydration 오류 디버깅 및 README/문서 작성
+## 2. Target Users
 
-## 3. 대표 프롬프트 (3개 이상)
+| User | Needs / Pain points | Usage context |
+|------|---------------------|---------------|
+| **Small solar installers** | Want to quickly estimate generation/revenue per site and propose it. Repetitive spreadsheet work is tedious. | After a site survey, just before/during a client consultation |
+| **Solar sales representatives** | Want to give an approximate return immediately and build comparison material. | Phone / in-person consultations |
+| **Building owners considering solar** | Want an intuitive sense of the benefit for their region and building size. | Information-gathering stage |
 
-1. *"태양광 설치 사업자를 위한 웹 서비스를 Next.js(App Router)로 만들고 싶다.
-   백엔드와 유료 API 없이 localStorage만으로 동작해야 한다. 지역을 선택하고
-   설비용량을 입력하면 연간 발전량과 수익, 투자 회수기간을 계산하는 시뮬레이터를
-   핵심 기능으로 설계해줘."*
+The primary target is the **small solar installer**, who needs both the simplicity to use the
+tool with no training and the flexibility to adjust assumptions to on-site conditions.
 
-2. *"전국 17개 시·도의 일평균 발전시간(등가가동시간) 데이터를 만들고, 이를 이용해
-   지역별 연간 발전량을 비교하는 페이지를 만들어줘. 권역 필터, 이름 검색, 발전량
-   정렬, 막대 그래프 시각화가 가능해야 한다."*
+## 3. Project Goals
 
-3. *"시뮬레이터 결과를 localStorage에 저장하고, 저장한 견적을 카드로 비교하는
-   페이지를 추가해줘. 최고 수익과 최단 회수기간 견적을 자동으로 강조하고,
-   서버 렌더링과 클라이언트 렌더링이 달라 생기는 hydration 오류가 없도록 해줘."*
+- **G1.** Calculate annual generation and expected revenue within 3 seconds from region and system inputs.
+- **G2.** Let users compare and sort the generation potential of all 17 provinces/metropolitan cities on one screen.
+- **G3.** Allow saving and comparing estimates for multiple sites without sign-up or a server.
+- **G4.** Disclose every formula and assumption transparently so users can judge the reliability of results.
+- **G5.** Provide a consistent experience on both mobile and desktop, and deploy on Vercel.
 
-4. *"발전량·수익 계산식과 기본 가정값을 투명하게 설명하는 '계산 방법' 페이지를
-   만들고, 결과가 추정치임을 알리는 면책 문구를 푸터와 본문에 넣어줘."*
+## 4. Core User Scenario
 
-5. *"지역별 비교 페이지에 대한민국 17개 시·도 지도를 넣고 싶다. 외부 지도 API
-   없이 동작해야 한다. 공개 행정구역 GeoJSON을 빌드 시점에 단순화된 SVG 경로로
-   변환해 내장하고, 발전 잠재력에 따라 색을 칠한 뒤 호버/클릭으로 지역을
-   강조하고 비교 표와 연동해줘."*
+> **Situation** — Mr. Kim, a solar installer working in Naju (Jeollanam-do), receives a phone
+> call from a client asking, "How much will I earn per year if I put 100 kW on my roof?"
 
-6. *"국내 공개 통계(기상청 일사량 평년값, KPX·에너지공단 발전량 통계)를 참고해
-   지역별 월별 발전 패턴과 전국 연간 태양광 발전량 추이를 보여주는 '발전 데이터'
-   페이지를 만들어줘. 차트 라이브러리 없이 SVG로 그리고, 값이 추정치임을 출처와
-   함께 표기해줘."*
+1. Mr. Kim opens the SolarFit **revenue simulator**.
+2. He selects the region **Jeollanam-do** and a system capacity of **100 kW**.
+3. He keeps the default SMP price (KRW 130) and REC weight (1.2), and adjusts only the performance ratio to match site conditions.
+4. The screen immediately shows about **110,960 kWh/year of generation**, **~KRW 23.7M annual revenue**, a **payback period of ~5.9 years**, and **51 tons of CO₂ reduction**.
+5. He names the estimate "Naju Hanbit Village rooftop" and **saves** it.
+6. He saves other candidate sites the same way, then compares the highest-revenue and shortest-payback estimates on the **Saved Estimates** page to advise the client.
 
-7. *"엑셀과 달리 웹이어야 하는 이유가 될 기능을 넣고 싶다. 시뮬레이터의 입력값을
-   URL에 담아 '결과 링크 복사'로 복사하고, 그 링크로 접속하면 같은 입력으로
-   폼이 자동 채워지게 해줘."*
+## 5. Feature List
 
-## 4. AI 결과물 중 직접 수정·개선한 부분
+| Feature | Description | Priority |
+|---------|-------------|----------|
+| Revenue simulator | Real-time calculation of generation/revenue/payback from region, capacity, performance ratio, SMP/REC prices | **Must-have** |
+| Regional solar resource data | Built-in average daily generation hours for all 17 provinces/cities | **Must-have** |
+| Save/delete estimates (localStorage) | Save and manage calculation results in the browser | **Must-have** |
+| Curtailment adjustment | Adjust "sellable generation" and revenue by a regional curtailment rate (reflecting grid constraints such as Jeju) | **Should-have** |
+| Regional comparison (sort/filter/search) | Region-group filter, name search, generation sort, bar visualization | **Should-have** |
+| Generation-potential map | Choropleth map of 17 provinces; hover/click highlights a region and syncs two-way with the comparison table | **Should-have** |
+| Historical / monthly generation data | Visualize monthly generation pattern and national annual PV generation trend from public statistics | **Should-have** |
+| Shareable result link | Encode inputs into a URL and copy it, so a client opens the exact same result screen (a web-only capability) | **Should-have** |
+| Estimate comparison highlight | Automatically flag the highest-revenue and shortest-payback estimates | **Should-have** |
+| Environmental-impact conversion | Convert to CO₂ reduction and equivalent number of trees | **Should-have** |
+| Methodology / disclaimer disclosure | Disclose formulas, assumptions, and data sources | **Should-have** |
+| Export estimate to PDF | Output a saved estimate as a PDF proposal | **Nice-to-have** |
+| Live irradiance API integration | Connect precise per-site irradiance data | **Nice-to-have** |
 
-- **계산식 검증:** AI가 생성한 발전량·수익 공식을 직접 손계산으로 검증
-  (예: 100kW × 3.8h × 365 × 0.8 = 110,960kWh)하고, REC 수익을 MWh 단위로
-  환산하도록 단위를 명확히 정리했다.
-- **데이터 현실성:** 지역별 발전시간 값을 남부(전남·경북)가 높고 제주·수도권이
-  낮은 실제 경향에 맞게 조정하고, "추정치"임을 데이터 주석과 면책에 반복 명시했다.
-- **계통 제약 반영(출력제어):** 초기 모델은 발전량 전부가 SMP로 판매된다고
-  가정했으나, 제주처럼 출력제어가 잦은 지역에서는 수익이 과대추정된다. 이를
-  보완하기 위해 지역별 "출력제어율"을 도입해 *판매 가능 발전량 = 이론 발전량 ×
-  (1 − 출력제어율)* 로 수익·CO₂를 보정하도록 계산식을 수정했다.
-- **입력 안전성:** 숫자 입력이 문자열로 들어오거나 음수가 되는 경우를 대비해
-  `lib/calc.js`에 안전 파서(`num()`)를 추가하고 기본값으로 보정하도록 했다.
-- **코드 구조:** 계산·데이터·저장 로직을 `lib/`로 분리해 시뮬레이터와 지역 비교
-  페이지가 동일 로직을 재사용하도록 리팩터링했다.
-- **지도 데이터 경량화:** 약 7.5MB의 원본 시·도 경계 GeoJSON을 그대로 쓰면
-  번들이 너무 커지므로, Python 스크립트(`scripts/build_map.py`)로 등거리 투영 +
-  Douglas-Peucker 단순화 + 작은 섬 제거를 적용해 약 32KB의 SVG 경로로 줄여
-  내장했다.
-- **홈 화면 정보 중심 재구성:** 초기 홈에는 마케팅성 문구와 사용자 인용(후기)
-  섹션이 있었으나, 정보 전달에 집중하도록 인용 섹션과 과장 문구를 제거하고
-  서비스 정의·기능·사용 방법·데이터 출처 위주로 다시 구성했다.
-- **데이터 출처 정비:** 초기엔 해외(NASA) 데이터를 검토했으나, 국내 사업자
-  맥락에 맞는 신뢰성을 위해 기상청·한국에너지공단·전력거래소(KPX) 등 국내 공개
-  통계를 참고한 대표값으로 정리하고, 화면마다 출처와 "근사치" 한계를 표기했다.
-- **출력제어 데이터 보강:** 전력거래소(KPX) 비중앙 출력제어 정보와 공표 통계
-  (제주 출력제한 2023년 181회 등)를 참고해 제주·호남 출력제어율 기본값의 근거를
-  보정하고, '발전 데이터' 페이지에 "제주 출력제어 횟수 추이"를 출처와 함께 추가했다.
-  (시·도별 출력제어율을 그대로 주는 공개 API는 없고, 출력제어가 사실상 제주에
-  집중된 현실도 함께 명시했다.)
+## 6. Page Structure
 
-## 5. 발견한 버그·한계와 해결
+- **Home (`/`)** — Service overview, feature summary, how-to-use, data sources
+- **Simulator (`/simulator`)** — Input form + real-time results + save estimate + share link (the core interaction)
+- **Regional Comparison (`/regions`)** — Choropleth map + table + sort/filter for the 17 provinces
+- **Generation Data (`/data`)** — Monthly generation pattern, national annual PV generation trend, Jeju curtailment trend (public statistics)
+- **Saved Estimates (`/saved`)** — localStorage estimate list, comparison, delete
+- **Methodology (`/about`)** — Formulas, assumptions, data sources, disclaimer
 
-- **Hydration 불일치:** `/saved` 페이지에서 localStorage를 렌더링 중에 읽어
-  서버/클라이언트 출력이 달라지는 오류가 있었다. → `useEffect`에서 데이터를
-  읽고 `mounted` 플래그로 최초 렌더를 일치시켜 해결했다.
-- **기본 지역 선택:** 시뮬레이터 첫 진입 시 의미 있는 결과를 보여주기 위해
-  발전량이 가장 높은 전라남도를 기본값으로 설정했다.
-- **지도 투영 왜곡:** 처음엔 독도·울릉도 같은 먼 섬까지 포함해 투영 범위를
-  잡는 바람에 지도가 동쪽으로 늘어나 본토가 찌그러졌다. → 투영 범위를 "면적이
-  일정 기준 이상인, 유지된 영역"만으로 계산하도록 고쳐 한반도 형태를 바로잡았다.
-- **공유 링크와 useSearchParams:** Next.js App Router에서 `useSearchParams`는
-  Suspense 경계가 없으면 정적 빌드 시 오류를 낸다. → 클라이언트에서 `useEffect`로
-  `window.location.search`를 직접 파싱하는 방식으로 바꿔 빌드 오류 없이 동작하게 했다.
-- **데이터 정확도 한계:** 공개 통계를 참고한 대표값·근사치라 자료·연도 기준에
-  따라 실제 수치와 차이가 있을 수 있다. → 각 데이터에 출처와 "근사치"임을 명시하고,
-  정밀 분석 시 공공데이터포털·기상청 원자료를 사용하도록 안내했다.
-- **데이터 정확도 한계:** 지역 일사량은 대표 추정치라 실제 부지값과 차이가 있을
-  수 있다. → 면책 문구와 "계산 방법" 페이지로 한계를 명확히 고지하고, 사용자가
-  단가·성능비를 직접 조정할 수 있게 하여 보완했다.
+Every page has a shared **navigation bar** (current page highlighted, hamburger menu on mobile)
+at the top and a **footer** (disclaimer, key links) at the bottom.
 
-## 6. 최종 배포 URL (Vercel)
+## 7. Technical Requirements
 
-`https://<배포 후 이 자리에 Vercel URL 입력>`
+- **Framework:** Next.js 15 (App Router) + React 19
+- **Language:** JavaScript (prioritizing explainability; no TypeScript)
+- **Styling:** CSS Modules + global CSS design tokens (no external UI library)
+- **State / persistence:** React `useState`/`useMemo`; persistent storage via browser `localStorage`
+- **Backend:** None (all calculations run on the client; no cost or key management)
+- **Deployment:** Vercel (automatic deployment via GitHub integration)
+- **Structure:** Calculation logic (`lib/calc.js`), data (`lib/regions.js`, `lib/solarHistory.js`), and storage (`lib/storage.js`) are separated from the UI for reuse and testability
+
+## 8. Design Requirements
+
+- **Concept:** Warm **amber/orange** accents evoking sunlight, **navy** text conveying trust, and a bright, clean background.
+- **Layout:** Centered with a max width of 1080px, card-based information blocks, generous whitespace.
+- **Navigation:** Sticky top bar with the current page highlighted; hamburger toggle on mobile.
+- **Responsive:** Multi-column grid on desktop that collapses naturally to a single column on mobile.
+- **UX principles:** (1) Reflect results immediately on input (minimize feedback delay) (2) Clearly note that values are estimates (3) Surface key metrics in emphasized cards first (4) Usable instantly without sign-up.
+
+## 9. Milestones
+
+| Stage | Deliverable | Date |
+|-------|-------------|------|
+| M1. Planning | Service definition · PRD writing | 6/13 |
+| M2. Prototype | Next.js structure · calculation engine · simulator | 6/13 |
+| M3. Feature completion | Regional comparison · saved estimates · methodology page | 6/14 |
+| M4. Verification | Build/behavior check · calculation verification · responsive check | 6/14 |
+| M5. Deployment | GitHub upload · Vercel deployment · README | 6/14 |
+
+---
+
+# AI-Assisted Development Report
+
+## 1. AI Tools Used
+
+- **Claude (Anthropic, Claude Code)** — used throughout for idea refinement, code generation, debugging, and documentation.
+
+## 2. Tasks Asked of AI
+
+- Refining the web-service idea for solar installers and drafting the PRD
+- Designing the Next.js (App Router) project structure and generating page/component code
+- Implementing standard formulas for solar generation, revenue, and payback
+- Building the dataset of average daily generation hours for the 17 provinces/cities
+- Implementing localStorage-based estimate saving/comparison
+- Design-token-based CSS styling and responsive handling
+- Building the choropleth map, the generation-data page, and the shareable-link feature
+- Debugging build/hydration errors and writing the README and documentation
+
+## 3. Representative Prompts (3 or more)
+
+1. *"I want to build a web service for solar installers using Next.js (App Router). It must run with localStorage only, no backend or paid API. Design a simulator as the core feature: select a region and enter system capacity to calculate annual generation, revenue, and payback period."*
+
+2. *"Create a dataset of average daily generation hours (equivalent full-load hours) for all 17 provinces/metropolitan cities, and a page that compares annual generation by region. It should support region-group filtering, name search, generation sorting, and a bar-chart visualization."*
+
+3. *"Save simulator results to localStorage and add a page that compares saved estimates as cards. Automatically highlight the highest-revenue and shortest-payback estimates, and make sure there are no hydration errors caused by server/client rendering differences."*
+
+4. *"Create a 'methodology' page that transparently explains the generation/revenue formulas and default assumptions, and add disclaimer text in the footer and body noting that the results are estimates."*
+
+5. *"I want to add a map of South Korea's 17 provinces to the regional comparison page. It must work without an external map API. Convert a public administrative-boundary GeoJSON into simplified SVG paths at build time, color them by generation potential, and let hover/click highlight a region and sync with the comparison table."*
+
+6. *"Using Korean public statistics (KMA irradiance normals, KPX/Korea Energy Agency generation statistics), build a 'generation data' page that shows the regional monthly generation pattern and the national annual PV generation trend. Draw the charts with SVG (no chart library) and label values as estimates with their sources."*
+
+7. *"I want a feature that justifies being a web app rather than a spreadsheet. Encode the simulator's inputs into a URL with a 'copy result link' button, and when that link is opened, prefill the form with the same inputs."*
+
+## 4. Parts of the AI Output That Were Modified / Improved
+
+- **Formula verification:** Verified the AI-generated generation/revenue formulas by hand (e.g., 100 kW × 3.8 h × 365 × 0.8 = 110,960 kWh) and clarified units so REC revenue is computed in MWh.
+- **Data realism:** Adjusted regional generation-hour values to match the real tendency (higher in the south — Jeollanam-do, Gyeongsangbuk-do — and lower in Jeju and the capital area), and repeatedly noted "estimate" in the data comments and disclaimer.
+- **Grid-constraint modeling (curtailment):** The initial model assumed all generation is sold at SMP, which overestimates revenue in regions like Jeju where curtailment is frequent. Introduced a regional "curtailment rate" and changed the formula to *sellable generation = theoretical generation × (1 − curtailment rate)* to adjust revenue and CO₂.
+- **Input safety:** Added a safe parser (`num()`) in `lib/calc.js` to handle numeric inputs arriving as strings or as negatives, falling back to defaults.
+- **Code structure:** Refactored calculation/data/storage logic into `lib/` so the simulator and the regional comparison page reuse the same logic.
+- **Map data reduction:** The original ~7.5 MB province-boundary GeoJSON was too large to bundle, so a Python script (`scripts/build_map.py`) applies equidistant projection + Douglas–Peucker simplification + small-island removal to reduce it to ~32 KB of SVG paths.
+- **Information-focused home redesign:** The initial home page had marketing copy and a user-quote (testimonial) section; these were removed to focus on information, restructuring the page around service definition, features, how-to-use, and data sources.
+- **Data-source cleanup:** Initially considered overseas (NASA) data, but for credibility in a Korean-installer context, switched to representative values referenced from Korean public statistics (KMA, Korea Energy Agency, KPX) and labeled the source and "approximate" limitation on every screen.
+- **Curtailment-data reinforcement:** Referenced KPX non-central output-control information and published statistics (e.g., 181 Jeju curtailment events in 2023) to ground the Jeju/Honam curtailment-rate defaults, and added a "Jeju curtailment trend" chart with its source to the generation-data page. (No public API provides a per-province curtailment rate directly, and the fact that curtailment is effectively concentrated in Jeju is also stated.)
+
+## 5. Bugs, Errors, Limitations & Fixes
+
+- **Hydration mismatch:** Reading localStorage during render on the `/saved` page caused server/client output to differ. → Fixed by reading the data in `useEffect` and using a `mounted` flag to align the first render.
+- **Default region selection:** Set Jeollanam-do (highest generation) as the default so the simulator shows a meaningful result on first load.
+- **Map projection distortion:** Initially the projection bounds included far islands (Dokdo, Ulleungdo), stretching the map eastward and distorting the mainland. → Fixed by computing the projection bounds only from retained regions above an area threshold.
+- **Shareable links and `useSearchParams`:** In the Next.js App Router, `useSearchParams` throws during static build without a Suspense boundary. → Switched to parsing `window.location.search` directly in `useEffect` to work without a build error.
+- **Data accuracy limitation:** Because the figures are representative/approximate values referenced from public statistics, they may differ from actual values depending on the source and year. → Each dataset notes its source and the "approximate" nature, and users are directed to original sources (data.go.kr, KMA open data portal, KOSIS) for precise analysis.
+
+## 6. Final Vercel Deployment URL
+
+**https://assignment4-51gw.vercel.app**

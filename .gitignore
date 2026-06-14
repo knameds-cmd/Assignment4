@@ -32,6 +32,11 @@ yarn-error.log*
 # raw geojson source (generated lib/koreaGeo.js is committed instead)
 /scripts/data/
 
+# submission build artifacts
+/Assignment4/
+/Assignment4.zip
+/docs/README.pdf
+
 # assignment source pdf (kept in docs/ instead)
 /Assignment_4.pdf
 

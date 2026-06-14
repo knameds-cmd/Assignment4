@@ -1,108 +1,111 @@
-# ☀️ SolarFit — 지역별 태양광 발전·수익 시뮬레이터
+# ☀️ SolarFit — Regional Solar Generation & Revenue Simulator
 
-> 태양광 설치 사업자가 부지의 **연간 발전량·예상 수익·투자 회수기간·CO₂ 절감량**을
-> 현장에서 30초 만에 계산하고 고객에게 제안할 수 있게 돕는 웹 서비스.
+> A web service that helps solar installers estimate a site's **annual generation, expected
+> revenue, payback period, and CO₂ reduction** in about 30 seconds and present it to clients.
 
-**Introduction to AI Programming — Assignment 4** (PRD + AI 활용 웹서비스 구현)
+**Introduction to AI Programming — Assignment 4** (PRD + AI-assisted web service implementation)
 
-- 🔗 **배포 URL (Vercel):** `https://<여기에-배포-주소> ` _(배포 후 업데이트 예정)_
-- 📂 **GitHub:** https://github.com/knameds-cmd/Assignment4
-- 📄 **PRD & AI 개발 리포트:** [`docs/PRD_SolarFit.pdf`](docs/PRD_SolarFit.pdf)
+- 🔗 **Live Deployment (Vercel):** https://assignment4-51gw.vercel.app
+- 📂 **GitHub Repository:** https://github.com/knameds-cmd/Assignment4
+- 📄 **PRD & AI Development Report:** [`docs/PRD_SolarFit.pdf`](docs/PRD_SolarFit.pdf)
 
 ---
 
-## 1. 프로젝트 개요
+## 1. Project Overview
 
-소규모 태양광 설치 사업자는 새 부지를 검토할 때마다 *"여기 설치하면 1년에 얼마나
-발전하고 얼마를 버는가?"* 를 직접 계산해야 합니다. 지역별 일사량, 손실률, SMP·REC
-단가가 매번 달라 엑셀을 다시 짜야 하고, 고객 문의에 즉답하기 어렵습니다.
+Small solar installers must calculate *"how much will this site generate and earn per year?"*
+for every new site they evaluate. Because regional solar resource, system losses, and SMP/REC
+prices change each time, they rebuild spreadsheets repeatedly and struggle to answer client
+questions on the spot.
 
-**SolarFit**은 이 계산을 표준 산정식으로 자동화한 사업자용 도구입니다. 지역과 설비
-조건만 입력하면 발전량·수익·회수기간·환경 효과를 즉시 보여주고, 여러 부지의 견적을
-저장해 비교할 수 있습니다. 백엔드·데이터베이스 없이 브라우저(localStorage)만으로
-동작합니다.
+**SolarFit** automates this calculation with standard estimation formulas. Enter a region and
+system conditions, and it instantly shows generation, revenue, payback period, and
+environmental impact, and lets you save and compare multiple sites. It runs entirely in the
+browser (localStorage) with no backend or database.
 
-## 2. 주요 기능
+## 2. Main Features
 
-| 기능 | 설명 |
-|------|------|
-| **수익 시뮬레이터** | 지역·설비용량·성능비·SMP/REC 단가를 입력하면 연간 발전량, 예상 수익(SMP+REC), 투자 회수기간, 20년 누적 수익, CO₂ 절감량을 실시간 계산. 제주 등 계통 제약 지역은 **출력제어율**로 판매 가능 발전량·수익을 보정 |
-| **지역별 비교** | 전국 17개 시·도 **발전 잠재력 지도(choropleth)** + 권역 필터·검색·정렬·막대 그래프. 지도 호버/클릭으로 지역을 강조하고 비교 표와 양방향 연동 |
-| **발전 데이터** | 국내 공개 통계 기반 **지역별 월별 발전 패턴**, **전국 연간 태양광 발전량 추이**, **제주 출력제어 추이** 차트 (출처 표기) |
-| **결과 공유 링크** | 입력값을 URL로 담아 복사 → 고객에게 보내면 **동일한 결과 화면**이 열림 (엑셀로 불가능한 웹 고유 기능) |
-| **견적 저장·비교** | 계산 결과를 브라우저에 저장하고, 최고 수익·최단 회수기간 견적을 자동 하이라이트 |
-| **계산 방법 공개** | 모든 수식과 가정값, 데이터 출처·면책을 투명하게 안내 |
+| Feature | Description |
+|---------|-------------|
+| **Revenue simulator** | Enter region, capacity, performance ratio, and SMP/REC prices to compute annual generation, revenue (SMP + REC), payback period, 20-year cumulative revenue, and CO₂ reduction in real time. Grid-constrained regions such as Jeju are adjusted by a **curtailment rate** (sellable generation basis). |
+| **Regional comparison** | A **choropleth map** of all 17 provinces/cities plus region-group filter, search, sort, and bar charts. Hovering/clicking the map highlights a region and syncs two-way with the comparison table. |
+| **Generation data** | Charts based on Korean public statistics: **regional monthly generation pattern**, **national annual PV generation trend**, and **Jeju curtailment trend** (sources labeled). |
+| **Shareable result link** | Encode inputs into a URL and copy it — sending it to a client opens **the exact same result screen** (a web-only capability that a spreadsheet cannot offer). |
+| **Save & compare estimates** | Save results in the browser and automatically highlight the highest-revenue and shortest-payback estimates. |
+| **Methodology disclosure** | Transparently explain all formulas, assumptions, data sources, and disclaimers. |
 
-## 3. 페이지 구조
+## 3. Page Structure
 
-- `/` **홈** — 서비스 소개, 기능 요약, 사용 방법, 데이터 출처
-- `/simulator` **수익 시뮬레이터** — 핵심 인터랙션(입력 → 실시간 계산 → 저장 → 링크 공유)
-- `/regions` **지역별 비교** — 17개 시·도 발전 잠재력 지도·정렬/필터
-- `/data` **발전 데이터** — 월별 발전 패턴·전국 연간 발전량 추이(공개 통계)
-- `/saved` **저장한 견적** — localStorage 기반 견적 관리·비교
-- `/about` **계산 방법** — 수식·가정·데이터 출처·면책
+- `/` **Home** — Service overview, feature summary, how-to-use, data sources
+- `/simulator` **Revenue Simulator** — Core interaction (input → real-time calculation → save → share link)
+- `/regions` **Regional Comparison** — Generation-potential map + sort/filter for the 17 provinces
+- `/data` **Generation Data** — Monthly pattern, national annual trend, Jeju curtailment trend (public statistics)
+- `/saved` **Saved Estimates** — localStorage-based estimate management and comparison
+- `/about` **Methodology** — Formulas, assumptions, data sources, disclaimer
 
-## 4. 기술 스택
+## 4. Tech Stack
 
 - **Next.js 15** (App Router) + **React 19**
-- **CSS Modules** + 전역 CSS (디자인 토큰 기반, 외부 UI 라이브러리 미사용)
-- **localStorage** (백엔드 없이 견적 저장)
-- **Vercel** 배포
+- **CSS Modules** + global CSS (design-token based, no external UI library)
+- **localStorage** (estimate storage without a backend)
+- **Vercel** deployment
 
-## 5. 로컬에서 실행하기
+## 5. Run Locally
 
-사전 준비: [Node.js](https://nodejs.org) 18 이상
+Prerequisite: [Node.js](https://nodejs.org) 18 or later
 
 ```bash
-# 1) 저장소 클론
+# 1) Clone the repository
 git clone https://github.com/knameds-cmd/Assignment4.git
 cd Assignment4
 
-# 2) 의존성 설치
+# 2) Install dependencies
 npm install
 
-# 3) 개발 서버 실행 → http://localhost:3000
+# 3) Start the dev server → http://localhost:3000
 npm run dev
 
-# 4) 프로덕션 빌드 / 실행
+# 4) Production build / start
 npm run build
 npm start
 ```
 
-## 6. 프로젝트 구조
+## 6. Project Structure
 
 ```
 .
 ├── app/                  # Next.js App Router
-│   ├── layout.js         # 공통 레이아웃(Nav + Footer)
-│   ├── page.js           # 홈
-│   ├── globals.css       # 디자인 토큰 · 공통 스타일
-│   ├── simulator/        # 수익 시뮬레이터 (핵심 인터랙션 + 공유 링크)
-│   ├── regions/          # 지역별 비교 (지도 포함)
-│   ├── data/             # 발전 데이터 (월별·연간 차트)
-│   ├── saved/            # 저장한 견적
-│   └── about/            # 계산 방법
-├── components/           # Nav, Footer, KoreaMap (공용 컴포넌트)
+│   ├── layout.js         # Shared layout (Nav + Footer)
+│   ├── page.js           # Home
+│   ├── globals.css       # Design tokens · shared styles
+│   ├── simulator/        # Revenue simulator (core interaction + share link)
+│   ├── regions/          # Regional comparison (with map)
+│   ├── data/             # Generation data (monthly/annual charts)
+│   ├── saved/            # Saved estimates
+│   └── about/            # Methodology
+├── components/           # Nav, Footer, KoreaMap (shared components)
 ├── lib/
-│   ├── regions.js        # 17개 시·도 일사량·출력제어율 데이터
-│   ├── calc.js           # 발전량·수익 계산 엔진
-│   ├── storage.js        # localStorage 헬퍼
-│   ├── solarHistory.js   # 월별·연간 발전 통계 (공개 자료 기반)
-│   └── koreaGeo.js       # 시·도 SVG 경로 (자동 생성, 지도용)
+│   ├── regions.js        # 17 provinces: irradiance & curtailment-rate data
+│   ├── calc.js           # Generation & revenue calculation engine
+│   ├── storage.js        # localStorage helper
+│   ├── solarHistory.js   # Monthly/annual generation statistics (from public data)
+│   └── koreaGeo.js       # Province SVG paths (auto-generated, for the map)
 ├── scripts/
-│   ├── build_pdf.py      # PRD.md → PDF 변환
-│   └── build_map.py      # GeoJSON → 단순화된 SVG 경로 생성
+│   ├── build_pdf.py      # Markdown → PDF converter (for the PRD/report)
+│   └── build_map.py      # GeoJSON → simplified SVG path generator
 ├── docs/
-│   ├── PRD.md            # PRD + AI 리포트 (원문)
-│   └── PRD_SolarFit.pdf  # PRD + AI 개발 리포트 (제출본)
+│   ├── PRD.md            # PRD + AI report (source)
+│   └── PRD_SolarFit.pdf  # PRD + AI development report (submission copy)
 └── README.md
 ```
 
-## 7. 참고 — 데이터 면책
+## 7. Note — Data & Disclaimer
 
-지역별 일사량·과거 태양광 발전량·출력제어는 **기상청 일사량 평년값, 한국에너지공단
-신·재생에너지 보급통계, 전력거래소(KPX) 전력시장통계·비중앙 출력제어 정보** 등
-국내 공개 자료를 참고한 **대표값·근사치**이며 학습용 데모로 단순화되었습니다. 발전량·수익·회수기간은
-실제 사업 수익을 보장하지 않으며, 정밀 분석에는 공공데이터포털·기상청
-기상자료개방포털·KOSIS 등의 원자료가 필요합니다. (자세한 내용은 서비스 내
-**계산 방법** 페이지 참조)
+Regional irradiance, historical PV generation, and curtailment use **representative /
+approximate values** referenced from Korean public sources — **Korea Meteorological
+Administration (KMA) irradiance normals, Korea Energy Agency renewable-energy statistics, and
+Korea Power Exchange (KPX) market statistics / non-central output-control information** — and
+are simplified for an educational demo. The generation, revenue, and payback figures do not
+guarantee actual business returns; precise analysis requires original data from sources such as
+data.go.kr, the KMA open-data portal, and KOSIS. (See the in-app **Methodology** page for
+details.)
